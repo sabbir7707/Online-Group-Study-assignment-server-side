@@ -27,13 +27,13 @@ async function run() {
     //await client.connect();
 
     const assignmentCollection = client.db('assignment').collection('allassignment');
- /*    const addCollection = client.db('assignment').collection('addassignment');  */
+  /*    const addCollection = client.db('assignment').collection('addassignment');  */
 
-     /* app.get('/app/v1/allassignment', async (req ,res)=>{
+      app.get('/app/v1/allassignment', async (req ,res)=>{
       const cursor = assignmentCollection.find();
       const result =await cursor.toArray()
       res.send(result)
-     }) */
+     }) 
 
  /*     //client user thake add korba   assignment gula 
      app.post('/app/v1/allassignment', async (req ,res)=>{
