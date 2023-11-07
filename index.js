@@ -35,12 +35,12 @@ async function run() {
       res.send(result)
      }) 
 
- /*     //client user thake add korba   assignment gula 
+     //client user thake add korba   assignment gula 
      app.post('/app/v1/allassignment', async (req ,res)=>{
        const add_asg = req.body;
        const result =  await assignmentCollection .insertOne(add_asg)
      res.send(result)
-     }) */
+     }) 
 
 
 
