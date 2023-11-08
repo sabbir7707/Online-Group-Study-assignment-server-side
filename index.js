@@ -1,15 +1,22 @@
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const express = require('express');
 const cors = require('cors');
+require('dotenv').config()
 const app = express();
 const port = process.env.PORT || 5000;
 
 // middleware
-app.use(cors())
+ app.use(cors()) 
 app.use(express.json());
 
 
-const uri ='mongodb+srv://online-group-study:SBSXE00VI6u9dvkR@cluster0.ey6olt5.mongodb.net/?retryWrites=true&w=majority';
+
+// DB_USER = online-group-study
+// DB_PASS = SBSXE00VI6u9dvkR
+
+console.log(process.env.DB_USER);
+
+const uri =`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.ey6olt5.mongodb.net/?retryWrites=true&w=majority`;
 /// kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -27,13 +34,17 @@ async function run() {
     //await client.connect();
 
     const assignmentCollection = client.db('assignment').collection('allassignment');
-  /*    const addCollection = client.db('assignment').collection('addassignment');  */
+     const addCollection = client.db('assignment').collection('addassignment');  
 
       app.get('/app/v1/allassignment', async (req ,res)=>{
       const cursor = assignmentCollection.find();
       const result =await cursor.toArray()
       res.send(result)
      }) 
+
+    
+     //
+
 
      //client user thake add korba   assignment gula 
      app.post('/app/v1/allassignment', async (req ,res)=>{
@@ -42,16 +53,64 @@ async function run() {
      res.send(result)
      }) 
 
+     //update assignment 
+     app.get('/app/v1/allassignment/:id', async(req ,res)=>{
+        const id = req.params.id;
+       const query = {_id: new ObjectId(id)}
+       const result =await assignmentCollection.findOne(query)
+        res.send(result);
+
+    }) 
+    app.put('/app/v1/allassignment/:id', async(req,res)=>{
+           const id = req.params.id;
+      const filter = {_id: new ObjectId(id)}
+      const options ={upsert:true};
+
+       const updateproduct =req.body;
+      const product ={
+        $set:{
+            title:updateproduct.title, 
+            Description:updateproduct.Description, 
+            marks:updateproduct.marks,
+            due_date:updateproduct.due_date, 
+            thumbnail_url:updateproduct. thumbnail_url,
+            difficulty_level:updateproduct.difficulty_level, 
+           
+        }
+
+      }
+      const result =await assignmentCollection.updateOne(filter,product,options)
+        res.send(result);
+
+    })
+     // submitaded assignment
+    app.get('/app/v1/addassignment', async (req ,res)=>{
+      const cursor = addCollection .find();
+      const result =await cursor.toArray()
+      res.send(result)
+     }) 
+
+     app.post('/app/v1/addassignment', async (req ,res)=>{
+      const add_asg = req.body;
+      const result =  await addCollection .insertOne(add_asg)
+    res.send(result)
+    }) 
 
 
-     //delete korar kage 
+
+
+ 
+
+
      
- /*     app.delete('/app/v1/user/addassignment', async (req ,res)=>{
-       const add_asg = req.body;
-       const result =  await addCollection.insertOne(add_asg)
-     res.send(result)
-     })
- */
+   /*  app.delete('/app/v1/allassignment/:id', async(req ,res)=>{
+      const id = req.params.id;
+     const query = {_id: new ObjectId(id)}
+     const result =await assignmentCollection.deleteOne(query)
+      res.send(result);
+
+  })
+  */
 
 
     // Send a ping to confirm a successful connection
