@@ -32,6 +32,20 @@ async function run() {
     const assignmentCollection = client.db('assignment').collection('allassignment');
     const addCollection = client.db('assignment').collection('addassignment');
 
+
+    app.get('/app/v1/allassignment', async (req, res) => {
+      console.log('paginatin  quarry ', req.query);
+      const page = parseInt(req.query.page);
+      const size = parseInt(req.query.size);
+      console.log('pagination query', page, size);
+      const result = await assignmentCollection.find()
+      .skip(page * size)
+      .limit(size)
+      .toArray();
+
+      res.send(result);
+    })
+
     app.get('/app/v1/allassignment', async (req, res) => {
       const cursor = assignmentCollection.find();
       const result = await cursor.toArray()
@@ -80,11 +94,24 @@ async function run() {
 
     })
     // submitaded assignment
-    app.get('/app/v1/addassignment', async (req, res) => {
-      const cursor = addCollection.find();
+    app.get('/app/v1/task', async (req, res) => {
+      const mail=req.query.email
+     console.log(mail);
+      const cursor = addCollection.find({email:mail});
       const result = await cursor.toArray()
+      console.log(result);
       res.send(result)
     })
+    app.get('/app/v1/submited', async (req, res) => {
+    
+     
+      const cursor = addCollection.find();
+      const result = await cursor.toArray()
+      console.log(result);
+      res.send(result)
+    })
+
+
 
     app.post('/app/v1/addassignment', async (req, res) => {
       const add_asg = req.body;
@@ -100,6 +127,14 @@ async function run() {
       res.send(result);
 
     })
+
+    // paigination
+    app.get('/app/v1/pgassignment', async (req, res) => {
+      const count = await assignmentCollection.estimatedDocumentCount();
+      res.send({count});
+    })
+
+
 
 
 
